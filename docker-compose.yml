@@ -4,10 +4,10 @@ services:
   db:
     image: mysql:8.0
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: videoapp
-      MYSQL_USER: appuser
-      MYSQL_PASSWORD: apppassword
+      MYSQL_ROOT_PASSWORD: FEotrNqzkTnGmPrvgeOhmJnvHeaLecHE
+      MYSQL_DATABASE: railway
+      MYSQLUSER: root
+      MYSQLPASSWORD: FEotrNqzkTnGmPrvgeOhmJnvHeaLecHE
     ports:
       - "3306:3306"
     volumes:
@@ -16,10 +16,10 @@ services:
   app:
     build: .
     environment:
-      MYSQL_HOST: db
-      MYSQL_USER: appuser
-      MYSQL_PASSWORD: apppassword
-      MYSQL_DATABASE: videoapp
+      MYSQLHOST: mysql.railway.internal
+      MYSQLUSER: root
+      MYSQLPASSWORD: FEotrNqzkTnGmPrvgeOhmJnvHeaLecHE
+      MYSQL_DATABASE: railway
       NEXTAUTH_SECRET: supersecretkey123
     ports:
       - "3000:3000"
