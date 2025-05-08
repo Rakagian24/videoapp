@@ -67,7 +67,7 @@ export default function Home() {
           overlayClassName="overlay"
         >
           <h2 className="text-xl font-bold mb-4">Upload Video</h2>
-          <form onSubmit={handleUpload} encType="multipart/form-data" c>
+          <form onSubmit={handleUpload} encType="multipart/form-data" className="mb-6 bg-gray-800 p-4 rounded">
             <div className="mb-2">
               <label htmlFor="video" className="block mb-1">Upload Video</label>
               <input type="file" id="video" name="video" accept="video/*" required className="w-full"/>
