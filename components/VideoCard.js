@@ -70,7 +70,7 @@ export default function VideoCard({ video }) {
     <div className="max-w-md mx-auto bg-gray-800 rounded-lg p-3 mb-6">
       <p className="text-gray-300 mb-1 font-semibold">@{video.username}</p>
       <video
-        src={`/uploads/${video.filename}`}
+        src={video.filename}
         controls
         className="w-full rounded mb-2 max-h-[400px] object-contain"
       />
