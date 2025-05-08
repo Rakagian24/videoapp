@@ -1,12 +1,14 @@
 import pool from '../../../../lib/db';
 import { getSession } from 'next-auth/react';
+import { getServerSession } from "next-auth/next"
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).end('Method Not Allowed');
   }
 
-  const session = await getSession({ req });
+  // const session = await getSession({ req });
+  const session = await getServerSession(req, res, authOptions);
   if (!session) {
     return res.status(401).json({ error: 'Unauthorized' });
   }

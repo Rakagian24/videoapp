@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import pool from '../../lib/db';
 import { getSession } from 'next-auth/react';
+import { getServerSession } from "next-auth/next"
 
 export const config = {
   api: {
@@ -15,7 +16,8 @@ export default async function handler(req, res) {
     return res.status(405).end('Method Not Allowed');
   }
 
-  const session = await getSession({ req });
+  // const session = await getSession({ req });
+  const session = await getServerSession(req, res, authOptions);
   if (!session) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
@@ -36,15 +38,14 @@ export default async function handler(req, res) {
     }
 
     console.log('Fields:', fields);
-    console.log('Files:', files); // Log files to see what is received
+    console.log('Files:', files);
 
     const file = files.video;
     if (!file || !file.name) {
       return res.status(400).json({ error: 'No video file uploaded or filename is missing' });
     }
 
-    // Log the file path to check its value
-    console.log('File path:', file.path); // Use file.path instead of file.filepath
+    console.log('File path:', file.path);
 
     const timestamp = Date.now();
     const ext = path.extname(file.name);
@@ -52,9 +53,9 @@ export default async function handler(req, res) {
     const newPath = path.join(form.uploadDir, filename);
 
     try {
-      await fs.promises.rename(file.path, newPath); // Use file.path here
+      await fs.promises.rename(file.path, newPath); 
     } catch (e) {
-      console.error('Error moving file:', e); // Log the error
+      console.error('Error moving file:', e);
       return res.status(500).json({ error: 'Failed to save file' });
     }
 

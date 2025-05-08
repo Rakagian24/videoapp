@@ -40,7 +40,7 @@ export default function Home() {
     if (res.ok) {
       e.target.reset();
       fetchVideos();
-      setModalIsOpen(false); // Close modal after upload
+      setModalIsOpen(false);
     } else {
       const data = await res.json();
       setUploadError(data.error || 'Upload failed');
@@ -67,7 +67,7 @@ export default function Home() {
           overlayClassName="overlay"
         >
           <h2 className="text-xl font-bold mb-4">Upload Video</h2>
-          <form onSubmit={handleUpload} encType="multipart/form-data">
+          <form onSubmit={handleUpload} encType="multipart/form-data" c>
             <div className="mb-2">
               <label htmlFor="video" className="block mb-1">Upload Video</label>
               <input type="file" id="video" name="video" accept="video/*" required className="w-full"/>
@@ -96,3 +96,4 @@ export default function Home() {
     </div>
   );
 }
+z
