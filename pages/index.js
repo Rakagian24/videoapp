@@ -1,14 +1,17 @@
-import React from 'react'; 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import NavBar from '../components/NavBar';
 import VideoCard from '../components/VideoCard';
 import { useSession } from 'next-auth/react';
+import Modal from 'react-modal';
+
+Modal.setAppElement('#__next'); // Set the app element for accessibility
 
 export default function Home() {
   const [videos, setVideos] = useState([]);
   const { data: session } = useSession();
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState(null);
+  const [modalIsOpen, setModalIsOpen] = useState(false);
 
   const fetchVideos = async () => {
     const res = await fetch('/api/videos');
@@ -37,6 +40,7 @@ export default function Home() {
     if (res.ok) {
       e.target.reset();
       fetchVideos();
+      setModalIsOpen(false); // Close modal after upload
     } else {
       const data = await res.json();
       setUploadError(data.error || 'Upload failed');
@@ -51,7 +55,19 @@ export default function Home() {
         <h1 className="text-3xl font-bold mb-4 text-white text-center">All Videos</h1>
 
         {session && (
-          <form onSubmit={handleUpload} encType="multipart/form-data" className="mb-6 bg-gray-800 p-4 rounded">
+          <button onClick={() => setModalIsOpen(true)} className="bg-blue-600 hover:bg-blue-700 text-white rounded px-4 py-2 mb-4">
+            Upload Video
+          </button>
+        )}
+
+        <Modal
+          isOpen={modalIsOpen}
+          onRequestClose={() => setModalIsOpen(false)}
+          className="modal"
+          overlayClassName="overlay"
+        >
+          <h2 className="text-xl font-bold mb-4">Upload Video</h2>
+          <form onSubmit={handleUpload} encType="multipart/form-data">
             <div className="mb-2">
               <label htmlFor="video" className="block mb-1">Upload Video</label>
               <input type="file" id="video" name="video" accept="video/*" required className="w-full"/>
@@ -65,7 +81,7 @@ export default function Home() {
             </button>
             {uploadError && <p className="text-red-500 mt-2">{uploadError}</p>}
           </form>
-        )}
+        </Modal>
 
         {!session && (
           <p className="text-center text-gray-400 mb-4">You must be logged in to upload videos.</p>
