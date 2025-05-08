@@ -5,14 +5,4 @@ node_modules/
 .next/
 out/
 
-# IDE and editor files
-.idea/
-.vscode/
-*.sublime-project
-*.sublime-workspace
-
-# MacOS files
-.DS_Store
-
-# Windows files
-Thumbs.db
+testing.js
