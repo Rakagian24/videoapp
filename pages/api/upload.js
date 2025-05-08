@@ -1,10 +1,9 @@
 import formidable from 'formidable-serverless';
 import fs from 'fs';
-import path from 'path';
-import pool from '../../lib/db';
 import cloudinary from '../../lib/cloudinary';
-import { getServerSession } from "next-auth/next"
+import { getServerSession } from "next-auth/next";
 import { authOptions } from './auth/[...nextauth]';
+import pool from '../../lib/db';
 
 export const config = {
   api: {
@@ -32,27 +31,33 @@ export default async function handler(req, res) {
     }
 
     const file = files.video;
-    if (!file || !file.filepath) {
-      return res.status(400).json({ error: 'No video file uploaded' });
+    if (!file || !file.path) {
+      return res.status(400).json({ error: 'No video file uploaded or filename is missing' });
     }
 
     try {
-      const result = await cloudinary.uploader.upload(file.filepath, {
-        resource_type: 'video',
-        folder: 'uploads', 
+      // Upload ke Cloudinary
+      const result = await cloudinary.uploader.upload(file.path, {
+        resource_type: 'video', // Penting!
+        folder: 'videos', // Optional: untuk mengelompokkan di Cloudinary
       });
 
       const conn = await pool.getConnection();
       await conn.query(
         'INSERT INTO videos (user_id, filename, description, created_at) VALUES (?, ?, ?, ?)',
-        [session.user.id, result.secure_url, fields.description || '', new Date()]
+        [
+          session.user.id,
+          result.secure_url, // URL video dari Cloudinary
+          fields.description || '',
+          new Date(),
+        ]
       );
       conn.release();
 
-      return res.status(200).json({ message: 'Video uploaded to Cloudinary', filename: result.secure_url });
+      return res.status(200).json({ message: 'Video uploaded successfully', url: result.secure_url });
     } catch (error) {
-      console.error(error);
-      return res.status(500).json({ error: 'Upload or database error' });
+      console.error('Upload error:', error);
+      return res.status(500).json({ error: 'Upload failed' });
     }
   });
 }
